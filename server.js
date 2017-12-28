@@ -12,8 +12,20 @@ app.use(bodyParser.json());
 app.use(express.static(__dirname + '/dist')); 
 
 app.get('/api/customers/page/:skip/:top', (req, res) => {
+    const topVal = req.params.top;
+    skipVal = req.params.skip;
+    skip = ((skipVal))? +skipVal : 0;
+    let top = ((topVal)) ? skip + (+topVal) : 10 ;
+
+    if (top > customers.length) {
+        top = skip + (customers.length - skip);
+    }
    
-    res.json(customers);
+    console.log(`Skip: ${skip} Top: ${top}`);
+
+    var pagedCustomers = customers.slice(skip, top);
+    res.setHeader('X-InlineCount', customers.length);
+    res.json(pagedCustomers);
 });
 
 // redirect all others to the index (HTML5 history)

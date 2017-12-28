@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from '../core/services/data.service';
-import { ICustomer } from '../shared/interface';
+import { ICustomer, IPagedResults } from '../shared/interface';
 
 @Component({
   selector: 'app-customers',
@@ -11,9 +11,11 @@ export class CustomersComponent implements OnInit {
 
   title: string;
   customers: ICustomer[] = [];
+  filteredCustomers: ICustomer[] = [];
   displayMode: DisplayModeEnum;
   displayModeEnum= DisplayModeEnum;
   pageSize = 10;
+  totalRecords: number;
 
   constructor(private dataService: DataService) { }
 
@@ -25,12 +27,16 @@ export class CustomersComponent implements OnInit {
 
   getCustomersPage(page: number) {
     this.dataService.getCustomersPage((page - 1) * this.pageSize, this.pageSize)
-      .subscribe((response: ICustomer[]) => {
-          this.customers = response;
+      .subscribe((response: IPagedResults<ICustomer[]>) => {
+          this.customers =  this.filteredCustomers = response.results;
+          this.totalRecords = response.totalRecords;
           console.log(this.customers);
       });
   }
 
+ pageChanged(page: number) {
+    this.getCustomersPage(page);
+ }
 }
 
 enum DisplayModeEnum {

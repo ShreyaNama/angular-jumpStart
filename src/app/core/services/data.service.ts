@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 
-import { ICustomer } from '../../shared/interface';
+import { ICustomer, IPagedResults } from '../../shared/interface';
 import { Observable } from 'rxjs/Observable';
 import { map, catchError } from 'rxjs/operators';
 
@@ -12,15 +12,19 @@ export class DataService {
 
    constructor(private http: HttpClient) { }
 
-   getCustomersPage(page: number, pageSize: number): Observable<ICustomer[]> {
+   getCustomersPage(page: number, pageSize: number): Observable<IPagedResults<ICustomer[]>> {
        console.log('I am in');
-       return this.http.get<ICustomer[]>(
+      return this.http.get<ICustomer[]>(
            `${this.customersBaseUrl}/page/${page}/${pageSize}`,
             { observe: 'response' })
         .pipe(
             map(res => {
-                let customers = res.body as ICustomer[];
-                    return customers;
+                const totalRecords = +res.headers.get('X-InlineCount');
+                const customers = res.body as ICustomer[];
+                return {
+                     results : customers,
+                      totalRecords: totalRecords
+                };
             })
         );
    }

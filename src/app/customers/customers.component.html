@@ -36,7 +36,13 @@
             </div>
         </div>
         
-        
+        <app-customers-card 
+          [customers]="filteredCustomers" 
+          [hidden]="displayMode !== displayModeEnum.Card"></app-customers-card>
+        <app-pagination 
+          [totalItems]="totalRecords" 
+          [pageSize]="pageSize" 
+          (pageChanged)="pageChanged($event)"></app-pagination>
           
     </div>
 </div>

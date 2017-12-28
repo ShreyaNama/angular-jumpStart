@@ -21,3 +21,8 @@ export interface IOrder {
     productName: string;
     itemCost: number;
 }
+
+export interface IPagedResults<T> {
+    totalRecords: number;
+    results: T;
+}
